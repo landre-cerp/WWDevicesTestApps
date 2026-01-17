@@ -91,6 +91,8 @@ try
             activeFrontpanels.Add(frontpanel);
             Console.WriteLine($"Successfully connected to {deviceId.Description}");
             
+            DisplayFrontpanelCapabilities(frontpanel);
+            
             frontpanel.ControlActivated += (sender, e) =>
             {
                 Console.WriteLine($"[{deviceId.Description}] Control Activated: {e.ControlId}");
@@ -186,6 +188,15 @@ try
                     TestFrontpanelBrightness(activeFrontpanels);
                     break;
                     
+                case '9':
+                    Console.WriteLine("\nFrontPanel Capabilities:");
+                    foreach (var frontpanel in activeFrontpanels)
+                    {
+                        Console.WriteLine($"\n{frontpanel.DeviceId.Description}:");
+                        DisplayFrontpanelCapabilities(frontpanel);
+                    }
+                    break;
+                    
                 case 'm':
                 case 'M':
                     DisplayMenu();
@@ -215,6 +226,23 @@ finally
 
 Console.WriteLine("Test program completed.");
 
+static void DisplayFrontpanelCapabilities(IFrontpanel frontpanel)
+{
+    var caps = frontpanel.Capabilities;
+    Console.WriteLine("  Capabilities:");
+    Console.WriteLine($"    Speed Display: {caps.HasSpeedDisplay}");
+    Console.WriteLine($"    Heading Display: {caps.HasHeadingDisplay}");
+    Console.WriteLine($"    Altitude Display: {caps.HasAltitudeDisplay}");
+    Console.WriteLine($"    Vertical Speed Display: {caps.HasVerticalSpeedDisplay}");
+    Console.WriteLine($"    Barometric Pressure: {caps.CanDisplayBarometricPressure}");
+    Console.WriteLine($"    QNH/QFE Indicators: {caps.CanDisplayQnhQfe}");
+    Console.WriteLine($"    Pilot Course Display: {caps.HasPilotCourseDisplay}");
+    Console.WriteLine($"    Copilot Course Display: {caps.HasCopilotCourseDisplay}");
+    Console.WriteLine($"    Alphanumeric Display: {caps.SupportsAlphanumericDisplay}");
+    Console.WriteLine($"    Flight Level Mode: {caps.HasFlightLevelMode}");
+    Console.WriteLine($"    Mach Speed Mode: {caps.HasMachSpeedMode}");
+}
+
 static void DisplayMenu()
 {
     Console.WriteLine("\nTest Menu:");
@@ -228,6 +256,7 @@ static void DisplayMenu()
     Console.WriteLine("    6 - Test FrontPanel displays");
     Console.WriteLine("    7 - Test FrontPanel LEDs");
     Console.WriteLine("    8 - Test FrontPanel brightness");
+    Console.WriteLine("    9 - Show FrontPanel capabilities");
     Console.WriteLine("  M - Show this menu");
     Console.WriteLine("  Q - Quit\n");
 }
@@ -457,6 +486,8 @@ static void TestFrontpanelDisplays(List<IFrontpanel> frontpanels)
     {
         foreach (var frontpanel in frontpanels)
         {
+            var caps = frontpanel.Capabilities;
+            
             if (frontpanel.DeviceId.Device == Device.WinWingFcu || 
                 frontpanel.DeviceId.Device == Device.WinWingFcuLeftEfis || 
                 frontpanel.DeviceId.Device == Device.WinWingFcuRightEfis || 
@@ -552,15 +583,21 @@ static void TestFrontpanelDisplays(List<IFrontpanel> frontpanels)
             }
             else if (frontpanel.DeviceId.Device == Device.WinWingPap3)
             {
-                var state = new Pap3State
-                {
-                    Speed = 200 + (cycle * 50),
-                    Heading = (cycle * 72) % 360,
-                    Altitude = 5000 + (cycle * 5000),
-                    VerticalSpeed = (cycle - 2) * 1000,
-                    PltCourseValue = (cycle * 90) % 360,
-                    CplCourseValue = ((cycle * 90) + 180) % 360
-                };
+                var state = new Pap3State();
+                
+                if (caps.HasSpeedDisplay)
+                    state.Speed = 200 + (cycle * 50);
+                if (caps.HasHeadingDisplay)
+                    state.Heading = (cycle * 72) % 360;
+                if (caps.HasAltitudeDisplay)
+                    state.Altitude = 5000 + (cycle * 5000);
+                if (caps.HasVerticalSpeedDisplay)
+                    state.VerticalSpeed = (cycle - 2) * 1000;
+                if (caps.HasPilotCourseDisplay)
+                    state.PltCourseValue = (cycle * 90) % 360;
+                if (caps.HasCopilotCourseDisplay)
+                    state.CplCourseValue = ((cycle * 90) + 180) % 360;
+                
                 frontpanel.UpdateDisplay(state);
             }
         }
