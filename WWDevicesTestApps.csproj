@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="libs\**" />
+    <Compile Remove="WwDevicesDotnet\**" />
+    <EmbeddedResource Remove="libs\**" />
+    <EmbeddedResource Remove="WwDevicesDotnet\**" />
+    <None Remove="libs\**" />
+    <None Remove="WwDevicesDotnet\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="libs\WwDevicesDotnet\WW-Devices-Dotnet.csproj" />
+  </ItemGroup>
+
+</Project>

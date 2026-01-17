@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="libs/WwDevicesDotnet/WW-Devices-Dotnet.csproj" />
+  <Project Path="WWDevicesTestApps.csproj" />
+</Solution>
