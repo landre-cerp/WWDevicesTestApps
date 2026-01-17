@@ -397,8 +397,6 @@ static void InitializeFrontpanel(IFrontpanel frontpanel, DeviceIdentifier device
 {
     Console.WriteLine($"Initializing {deviceId.Description}...");
     
-    var caps = frontpanel.Capabilities;
-    
     // Set initial brightness
     frontpanel.SetBrightness(128, 128, 128);
     
