@@ -1,6 +1,4 @@
 <Solution>
-  <Folder Name="/WwDevicesDotnet/">
-    <Project Path="WwDevicesDotnet/WW-Devices-Dotnet.csproj" />
-  </Folder>
+  <Project Path="libs/WwDevicesDotnet/WW-Devices-Dotnet.csproj" />
   <Project Path="WWDevicesTestApps.csproj" />
 </Solution>
